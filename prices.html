@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Prices — Cubic Crypto</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="brand"><img src="Cubic_Crypto_2.png" alt="Cubic Crypto PNG"></a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="prices.html" class="active">Prices</a>
+      <a href="craft.html">Crafting</a>
+      <a href="contact-support.html">Support</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card page-header">
+      <h1>Item Price Tracker</h1>
+      <p class="header-subtitle">Community-sourced price ranges for Cubic Castles items</p>
+      
+      <div class="search-wrapper">
+        <input type="text" id="price-search" class="search-bar" placeholder="Search items by name..." autocomplete="off">
+        <button id="price-clear" class="clear-btn" style="display:none;">✕</button>
+      </div>
+      
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="category-filter">Category:</label>
+          <select id="category-filter" class="select">
+            <option value="all">All Items</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="status-filter">Market Status:</label>
+          <select id="status-filter" class="select">
+            <option value="all">All</option>
+            <option value="stable">Stable</option>
+            <option value="volatile">Volatile</option>
+            <option value="rising">Rising</option>
+            <option value="falling">Falling</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="sort-filter">Sort By:</label>
+          <select id="sort-filter" class="select">
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="price-asc">Price (Low-High)</option>
+            <option value="price-desc">Price (High-Low)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <div class="stats-bar">
+      <span id="item-count">0 items</span>
+      <span class="stats-divider">•</span>
+      <span id="category-count">All categories</span>
+    </div>
+
+    <section class="grid" id="price-grid">
+      <div class="no-results">
+        <p>Loading items...</p>
+      </div>
+    </section>
+
+    <div id="price-no-results" class="no-results" style="display:none;">
+      <p>No items found matching your search.</p>
+      <button id="reset-filters" class="btn-secondary">Reset Filters</button>
+    </div>
+
+    <div class="pagination" id="pagination">
+      <button id="prev-page" class="btn-secondary" disabled>← Previous</button>
+      <span id="page-info">Page 1 of 1</span>
+      <button id="next-page" class="btn-secondary" disabled>Next →</button>
+    </div>
+  </main>
+
+  <dialog id="item-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-layout">
+        <div class="modal-image-section">
+          <div class="item-image">
+            <img id="modal-item-png" src="" alt="Item image">
+          </div>
+        </div>
+        <div class="modal-info-section">
+          <h2 id="modal-item-name">Item Name</h2>
+          <div class="modal-price" id="modal-item-price">0c - 0c</div>
+          <div class="modal-status">
+            <img id="modal-status-icon" src="" alt="Status" class="status-icon">
+          </div>
+          <div class="modal-category">
+            <span class="category-label">Category:</span>
+            <span id="modal-category-text">Basic</span>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary" id="modal-close-btn">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Cubic Crypto</h4>
+        <p>Community-driven prices and crafting for Cubic Castles</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="prices.html">Prices</a>
+        <a href="craft.html">Crafting</a>
+        <a href="contact-support.html">Support</a>
+      </div>
+      <div class="footer-section">
+        <h4>Community</h4>
+        <a href="#">Discord</a>
+        <a href="#">Twitter</a>
+        <a href="#">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Cubic Crypto. | Not affiliated with Cubic Castles.</span>
+    </div>
+  </footer>
+</body>
+</html>

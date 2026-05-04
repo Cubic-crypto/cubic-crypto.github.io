@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Support — Cubic Crypto</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="brand"><img src="Cubic_Crypto_2.png" alt="Cubic Crypto PNG"></a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="prices.html">Prices</a>
+      <a href="craft.html">Crafting</a>
+      <a href="contact-support.html" class="active">Support</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Page Header -->
+    <section class="card page-header">
+      <h1>Contact Support</h1>
+      <p class="header-subtitle">Submit a ticket and we'll get back to you within 24-48 hours</p>
+    </section>
+
+    <!-- Support Form -->
+    <section class="card support-card">
+      <div id="form-status"></div>
+      
+      <form id="support-form" class="support-form">
+        <!-- Username Field -->
+        <div class="form-group">
+          <label for="username">
+            <span class="label-icon">👤</span>
+            Cubic Castles Username 
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="username" 
+              name="username" 
+              placeholder="Your in-game username"
+              required 
+              minlength="3" 
+              maxlength="20"
+              pattern="[A-Za-z0-9_]+"
+              autocomplete="off"
+            >
+            <span class="input-icon">✓</span>
+          </div>
+          <small class="form-hint">Letters, numbers, and underscores only</small>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">
+            <span class="label-icon">📧</span>
+            Email Address 
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="your@email.com"
+              required
+              autocomplete="off"
+            >
+            <span class="input-icon">@</span>
+          </div>
+          <small class="form-hint">We'll use this to contact you about your issue</small>
+        </div>
+
+        <!-- Issue Type - Custom Dropdown -->
+        <div class="form-group">
+          <label for="issue-type">
+            <span class="label-icon">🏷️</span>
+            Issue Type 
+            <span class="required">*</span>
+          </label>
+          <div class="custom-select-wrapper">
+            <select id="issue-type" name="issue-type" required>
+              <option value="" disabled selected>Select an issue type</option>
+              <option value="bug">🐛 Bug Report</option>
+              <option value="prices">💰 Price Issue</option>
+              <option value="crafting">🔨 Crafting Recipe Issue</option>
+              <option value="account">🔐 Account Issue</option>
+              <option value="suggestion">💡 Suggestion</option>
+              <option value="other">📦 Other</option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Priority - Custom Dropdown -->
+        <div class="form-group">
+          <label for="priority">
+            <span class="label-icon">⚡</span>
+            Priority
+          </label>
+          <div class="custom-select-wrapper">
+            <select id="priority" name="priority">
+              <option value="low">🟢 Low - General question</option>
+              <option value="medium" selected>🟡 Medium - Need assistance</option>
+              <option value="high">🟠 High - Urgent issue</option>
+              <option value="critical">🔴 Critical - Cannot play</option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Message Field -->
+        <div class="form-group">
+          <label for="message">
+            <span class="label-icon">💬</span>
+            Issue Description 
+            <span class="required">*</span>
+          </label>
+          <div class="textarea-wrapper">
+            <textarea 
+              id="message" 
+              name="message" 
+              placeholder="Please describe your issue in detail. Include any error messages or steps to reproduce."
+              required 
+              minlength="20" 
+              maxlength="5000"
+              rows="6"
+            ></textarea>
+          </div>
+          <div class="textarea-footer">
+            <small class="form-hint">
+              <span id="char-count">0</span>/5000 characters
+            </small>
+            <small class="form-hint min-chars" id="min-chars-warning">
+              Minimum 20 characters
+            </small>
+          </div>
+        </div>
+
+        <!-- Attachments (Optional) -->
+        <div class="form-group">
+          <label for="attachments">
+            <span class="label-icon">📎</span>
+            Attachments (Optional)
+          </label>
+          <div class="file-input-wrapper">
+            <input 
+              type="file" 
+              id="attachments" 
+              name="attachments" 
+              accept="image/png,image/jpeg,image/jpg,image/gif"
+              multiple
+            >
+            <span class="file-input-label">Choose files</span>
+          </div>
+          <small class="form-hint">Screenshots help us understand issues better (Max 5 files, 5MB each)</small>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="clear-form">
+            <span>🗑️</span> Clear Form
+          </button>
+          <button type="submit" class="btn-primary" id="submit-ticket">
+            <span>📤</span> Submit Ticket
+          </button>
+        </div>
+      </form>
+
+      <!-- Success Message -->
+      <div id="success-message" class="success-message" style="display:none;">
+        <div class="success-icon">✅</div>
+        <h3>Ticket Submitted Successfully!</h3>
+        <p>Thank you for contacting us. We've received your ticket and will respond within 24-48 hours.</p>
+        <div class="ticket-info">
+          <span class="ticket-label">Ticket ID:</span>
+          <span id="ticket-id" class="ticket-value">CH-20250115-ABC123</span>
+        </div>
+        <button class="btn-primary" id="submit-another">
+          <span>📝</span> Submit Another Ticket
+        </button>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="card faq-section">
+      <h2>📋 Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-icon">⏰</span>
+            How long does it take to get a response?
+          </div>
+          <div class="faq-answer">
+            We typically respond within 24-48 hours. Critical issues flagged as "High" or "Critical" priority may be addressed sooner.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-icon">📝</span>
+            What information should I include?
+          </div>
+          <div class="faq-answer">
+            Include your username, what happened, steps to reproduce the issue, and any error messages you received.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-icon">🏢</span>
+            Is this affiliated with Cubic Castles?
+          </div>
+          <div class="faq-answer">
+            No, this is a community-run site. For official support, please contact Cubic Castles directly through their official channels.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-icon">🔄</span>
+            Can I update my ticket?
+          </div>
+          <div class="faq-answer">
+            Yes, simply reply to the confirmation email you receive and we'll update your ticket with the new information.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Cubic Crypto</h4>
+        <p>Community-driven prices and crafting for Cubic Castles</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="prices.html">Prices</a>
+        <a href="craft.html">Crafting</a>
+        <a href="contact-support.html">Support</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Cubic Crypto. | Not affiliated with Cubic Castles.</span>
+    </div>
+  </footer>
+</body>
+</html>
