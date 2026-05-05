@@ -453,7 +453,7 @@ if (categoryFilter) {
   /* ============================================
      SUPPORT FORM FUNCTIONALITY
      ============================================ */
-  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrrkn7hjzy7_u9Wgh1A0ScrRZHe0DGxxt8GXLXZZdQGq0qm3VzTdkKVuMP8Lsfwo_evg/exec';
   
   const supportForm = document.getElementById('support-form');
   const formStatus = document.getElementById('form-status');
@@ -463,6 +463,25 @@ if (categoryFilter) {
   const messageTextarea = document.getElementById('message');
   const charCountSpan = document.getElementById('char-count');
   const submitTicketBtn = document.getElementById('submit-ticket');
+  
+  // Helper functions for local storage
+  function saveTicketLocally(ticketData) {
+    try {
+      const tickets = JSON.parse(localStorage.getItem('cubicCryptoTickets') || '[]');
+      tickets.push(ticketData);
+      localStorage.setItem('cubicCryptoTickets', JSON.stringify(tickets));
+    } catch (e) {
+      console.warn('Could not save to local storage:', e);
+    }
+  }
+
+  function isGoogleScriptConfigured() {
+    return typeof GOOGLE_SCRIPT_URL === 'string' && GOOGLE_SCRIPT_URL.length > 0 && !GOOGLE_SCRIPT_URL.includes('YOUR_GOOGLE_SCRIPT_URL_HERE');
+  }
+
+  function generateTicketId() {
+    return 'CC-' + Math.floor(10000000 + Math.random() * 90000000);
+  }
   
   if (messageTextarea && charCountSpan) {
     messageTextarea.addEventListener('input', () => {
@@ -530,41 +549,59 @@ if (categoryFilter) {
       
       if (formStatus) formStatus.innerHTML = '';
       
+      const ticketId = generateTicketId();
       const formData = {
         username: usernameInput.value.trim(),
         email: emailInput.value.trim(),
         issueType: issueTypeSelect.value,
         priority: prioritySelect.value || 'medium',
         message: messageInput.value.trim(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        ticketId: ticketId
       };
-      
-      try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-        
-        // Generate ticket ID for display
-        const ticketId = 'CH-' + Math.floor(10000000 + Math.random() * 90000000);
-        const ticketIdSpan = document.getElementById('ticket-id');
-        if (ticketIdSpan) ticketIdSpan.textContent = ticketId;
-        
-        if (supportForm) supportForm.style.display = 'none';
-        if (successMessage) successMessage.style.display = 'block';
-        
-      } catch (error) {
-        console.error('Submission error:', error);
-        if (formStatus) {
-          formStatus.innerHTML = '<div class="error-message">Failed to submit ticket. Please check your connection and try again.</div>';
+
+      // Save ticket locally (always)
+      saveTicketLocally(formData);
+
+      let backendSuccess = false;
+
+      // Try to send to Google Apps Script (if configured)
+      if (isGoogleScriptConfigured()) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(formData)
+          });
+          backendSuccess = true;
+          console.log(`Ticket ${ticketId} sent to Google Apps Script`);
+        } catch (error) {
+          console.warn('Could not reach Google Apps Script, using local backup:', error);
         }
-      } finally {
+      } else {
+        console.log('Google Apps Script not configured, using local storage backup');
+      }
+
+      const ticketIdSpan = document.getElementById('ticket-id');
+      if (ticketIdSpan) ticketIdSpan.textContent = ticketId;
+
+      if (isGoogleScriptConfigured() && !backendSuccess) {
+        if (formStatus) {
+          formStatus.innerHTML = '<div class="error-message">Support submission failed. Please try again later.</div>';
+        }
         if (submitTicketBtn) {
           submitTicketBtn.disabled = false;
           submitTicketBtn.innerHTML = '<span>📤</span> Submit Ticket';
         }
+        return;
+      }
+
+      if (supportForm) supportForm.style.display = 'none';
+      if (successMessage) successMessage.style.display = 'block';
+      
+      if (submitTicketBtn) {
+        submitTicketBtn.disabled = false;
+        submitTicketBtn.innerHTML = '<span>📤</span> Submit Ticket';
       }
     });
   }
