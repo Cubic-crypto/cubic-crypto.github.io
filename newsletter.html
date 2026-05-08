@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Castle Gazette - Cubic Castles</title>
+    <link rel="stylesheet" href="styles.css">
+    <base target="_top">
+</head>
+<body>
+    <div class="container">
+        <header class="section-header">
+            <h2>Castle Crypto</h2>
+            <p class="section-subtitle">Get the latest Cubic Crypto updates.</p>
+        </header>
+
+        <div class="card">
+            <form id="subscribeForm">
+                <div class="form-group">
+                    <label>Username <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" placeholder="In-game Name" required>
+                        <span class="input-icon">👤</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" placeholder="email@example.com" required>
+                        <span class="input-icon">✉️</span>
+                    </div>
+                </div>
+                <div id="formError" class="error-message" style="display: none;"></div>
+                <button type="submit" id="submitBtn" class="btn-primary btn-large">Subscribe to Updates</button>
+            </form>
+
+            <div id="verificationSection" class="verification-section" style="display: none;">
+                <h3>Verify Your Email</h3>
+                <p class="section-subtitle">Check your inbox for a 6-digit code.</p>
+                <div class="form-group" style="margin-top: 20px;">
+                    <div class="input-wrapper">
+                        <input type="text" id="verifyCode" maxlength="6" placeholder="000000" style="text-align: center; letter-spacing: 4px; font-weight: bold;">
+                    </div>
+                </div>
+                <div id="verifyError" class="error-message" style="display: none;"></div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button id="verifyBtn" class="btn-primary" style="flex: 2;">Confirm Code</button>
+                    <button id="resendBtn" class="btn-secondary" style="flex: 1;">Resend</button>
+                </div>
+            </div>
+
+            <div id="successMessage" class="success-message" style="display: none;">
+                <div class="success-icon">🏰</div>
+                <h3>Welcome to the Realm!</h3>
+                <p>You are now officially subscribed.</p>
+                <a href="/" class="btn-secondary">Return Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4Rus4Ao7En5BIhDp7WwHZp3K-UPwGnlQrXdZdzAMT57cWsy5gffbb88UBzH28nWhdQQ/exec';
+        let currentUserEmail = '';
+        let cooldownActive = false;
+
+        document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            currentUserEmail = email;
+
+            setLoading('submitBtn', true);
+            hideError('formError');
+
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'subscribe', username, email }) });
+                const result = await response.json();
+                if (result.status === 'exists') { showError('formError', result.message); }
+                else { document.getElementById('subscribeForm').style.display = 'none'; document.getElementById('verificationSection').style.display = 'block'; }
+            } catch (err) { showError('formError', 'Server connection failed.'); }
+            finally { setLoading('submitBtn', false); }
+        });
+
+        document.getElementById('verifyBtn').addEventListener('click', async () => {
+            const code = document.getElementById('verifyCode').value;
+            setLoading('verifyBtn', true);
+            hideError('verifyError');
+
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'verify', email: currentUserEmail, code }) });
+                const result = await response.json();
+                if (result.status === 'success') { document.getElementById('verificationSection').style.display = 'none'; document.getElementById('successMessage').style.display = 'block'; }
+                else { showError('verifyError', result.message); }
+            } catch (err) { showError('verifyError', 'Verification failed.'); }
+            finally { setLoading('verifyBtn', false); }
+        });
+
+        document.getElementById('resendBtn').addEventListener('click', async () => {
+            if (cooldownActive) return;
+            setLoading('resendBtn', true);
+            
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'resend', email: currentUserEmail }) });
+                startCooldown(60);
+            } catch (err) { showError('verifyError', 'Failed to resend.'); setLoading('resendBtn', false); }
+        });
+
+        function startCooldown(seconds) {
+            cooldownActive = true;
+            const btn = document.getElementById('resendBtn');
+            let timeLeft = seconds;
+            const interval = setInterval(() => {
+                btn.innerText = `${timeLeft--}s`;
+                if (timeLeft < 0) { clearInterval(interval); btn.innerText = 'Resend'; btn.disabled = false; cooldownActive = false; }
+            }, 1000);
+            btn.disabled = true;
+        }
+
+        function setLoading(id, isLoading) {
+            const btn = document.getElementById(id);
+            btn.disabled = isLoading;
+            if (!cooldownActive) btn.innerText = isLoading ? '...' : (id === 'resendBtn' ? 'Resend' : btn.innerText);
+        }
+
+        function showError(id, msg) { const el = document.getElementById(id); el.innerText = msg; el.style.display = 'flex'; el.style.color = "var(--danger)"; }
+        function hideError(id) { document.getElementById(id).style.display = 'none'; }
+    </script>
+</body>
+</html>
